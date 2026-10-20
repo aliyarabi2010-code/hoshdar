@@ -1,0 +1,24 @@
+name: Build APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Get dependencies
+        run: flutter pub get
+        working-directory: lost_phone_finder
+      - name: Build APK
+        run: flutter build apk --release
+        working-directory: lost_phone_finder
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: lost_phone_finder/build/app/outputs/flutter-apk/app-release.apk
